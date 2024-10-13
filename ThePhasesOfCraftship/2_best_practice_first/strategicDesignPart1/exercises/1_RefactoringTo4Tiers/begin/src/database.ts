@@ -8,11 +8,17 @@ interface StudentPersistance {
   getGrades(id: string): any;
 }
 
+interface ClassesPersistence {
+  save(name: string): any;
+}
+
 class Database {
   public students: StudentPersistance;
+  public classes: ClassesPersistence;
 
   constructor(private prisma: PrismaClient) {
     this.students = this.buildStudentPersistence();
+    this.classes = this.buildClassesPersistence();
   }
 
   buildStudentPersistence(): StudentPersistance {
@@ -23,6 +29,10 @@ class Database {
       getAssignments: this.getStudentAssignments,
       getGrades: this.getStudentGrades,
     };
+  }
+
+  buildClassesPersistence(): ClassesPersistence {
+    return { save: this.saveClass };
   }
 
   private async saveStudent(name: string) {
@@ -89,6 +99,16 @@ class Database {
         assignment: true,
       },
     });
+  }
+
+  private async saveClass(name: string) {
+    const data = await this.prisma.class.create({
+      data: {
+        name,
+      },
+    });
+
+    return data;
   }
 }
 

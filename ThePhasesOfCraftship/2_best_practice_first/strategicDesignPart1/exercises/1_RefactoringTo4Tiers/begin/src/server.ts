@@ -2,6 +2,7 @@ import express, { Application as ExpressApp } from "express";
 import { Server as HttpServer } from "http";
 
 import StudetnsController from "./controllers/students";
+import ClassesController from "./controllers/classes";
 
 class Server {
   private readonly _instance: ExpressApp;
@@ -10,7 +11,10 @@ class Server {
     return this._instance;
   }
 
-  constructor(private studentController: StudetnsController) {
+  constructor(
+    private studentController: StudetnsController,
+    private classesController: ClassesController,
+  ) {
     this._instance = express();
     this.addMiddleware();
     this.registerRouters();
@@ -18,6 +22,7 @@ class Server {
 
   registerRouters() {
     this._instance.use("/students", this.studentController.getRouter());
+    this._instance.use("/classes", this.classesController.getRouter());
   }
 
   addMiddleware() {

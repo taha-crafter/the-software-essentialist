@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import {
+  ClassNotFoundException,
   InvalidRequestBodyException,
   StudentNotFoundException,
 } from "./exceptions";
 import ErrorExceptionType from "./constants";
+import { Class } from "@prisma/client";
 
 type ErrorHandler = (
   error: Error,
@@ -30,6 +32,14 @@ function errorHandler(
   if (error instanceof StudentNotFoundException) {
     return res.status(404).json({
       error: ErrorExceptionType.StudentNotFound,
+      data: undefined,
+      success: false,
+      message: error.message,
+    });
+  }
+  if (error instanceof ClassNotFoundException) {
+    return res.status(404).json({
+      error: ErrorExceptionType.ClassNotFound,
       data: undefined,
       success: false,
       message: error.message,

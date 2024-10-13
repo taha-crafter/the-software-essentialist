@@ -8,11 +8,21 @@ interface StudentPersistance {
   getGrades(id: string): any;
 }
 
+interface ClassesPersistence {
+  save(name: string): any;
+  saveEnrollment(studentId: string, classId: string): any;
+  getById(id: string): any;
+  getAssignments(id: string): any;
+  getEnrollment(studentId: string, classId: string): any;
+}
+
 class Database {
   public students: StudentPersistance;
+  public classes: ClassesPersistence;
 
   constructor(private prisma: PrismaClient) {
     this.students = this.buildStudentPersistence();
+    this.classes = this.buildClassesPersistence();
   }
 
   buildStudentPersistence(): StudentPersistance {
@@ -23,6 +33,18 @@ class Database {
       getAssignments: this.getStudentAssignments,
       getGrades: this.getStudentGrades,
     };
+  }
+
+  buildClassesPersistence(): ClassesPersistence {
+    return {
+      save: this.saveClass,
+      saveEnrollment: this.saveEnrollment,
+      getById: this.getClassById,
+      getAssignments: this.getClassAssignments,
+      getEnrollment: this.getEnrollment,
+    };
+  }
+
   }
 
   private async saveStudent(name: string) {
@@ -46,6 +68,8 @@ class Database {
         name: "asc",
       },
     });
+
+    return data;
   }
 
   private async getStudentById(id: string) {
@@ -64,7 +88,7 @@ class Database {
   }
 
   private async getStudentAssignments(id: string) {
-    const data = this.prisma.studentAssignment.findMany({
+    const data = await this.prisma.studentAssignment.findMany({
       where: {
         studentId: id,
         status: "submitted",
@@ -78,7 +102,7 @@ class Database {
   }
 
   private async getStudentGrades(id: string) {
-    const data = this.prisma.studentAssignment.findMany({
+    const data = await this.prisma.studentAssignment.findMany({
       where: {
         studentId: id,
         grade: {
@@ -89,6 +113,64 @@ class Database {
         assignment: true,
       },
     });
+
+    return data;
+  }
+
+  private async saveClass(name: string) {
+    const data = await this.prisma.class.create({
+      data: {
+        name,
+      },
+    });
+
+    return data;
+  }
+
+  private async saveEnrollment(studentId: string, classId: string) {
+    const data = await this.prisma.classEnrollment.create({
+      data: {
+        studentId,
+        classId,
+      },
+    });
+
+    return data;
+  }
+
+  private async getClassById(id: string) {
+    const data = await this.prisma.class.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return data;
+  }
+
+  private async getClassAssignments(id: string) {
+    const data = await this.prisma.assignment.findMany({
+      where: {
+        classId: id,
+      },
+      include: {
+        class: true,
+        studentTasks: true,
+      },
+    });
+
+    return data;
+  }
+
+  private async getEnrollment(studentId: string, classId: string) {
+    const data = await this.prisma.classEnrollment.findFirst({
+      where: {
+        studentId,
+        classId,
+      },
+    });
+
+    return data;
   }
 }
 

@@ -26,6 +26,7 @@ class ClassesController {
   private setupRoutes() {
     this.router.post("/", this.createClass);
     this.router.post("/enrollments", this.enrollStudent);
+    this.router.get("/:id/assignments", this.getAssignments);
   }
 
   private setupErrorHandler() {

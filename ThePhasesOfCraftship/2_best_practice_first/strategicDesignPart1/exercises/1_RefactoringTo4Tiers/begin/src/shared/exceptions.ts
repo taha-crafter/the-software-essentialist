@@ -15,7 +15,7 @@ class ClassNotFoundException extends Error {
     super("Class Not Found");
   }
 }
-o;
+
 class StudentAlreadyEnrolledException extends Error {
   constructor() {
     super("Student is already enrolled in class");

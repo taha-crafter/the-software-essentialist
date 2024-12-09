@@ -1,18 +1,23 @@
 import { defineFeature, loadFeature } from "jest-cucumber";
 import request from "supertest";
+import { resetDatabase } from "../fixtures/reset";
 import { app } from "../../src/index";
 
 const feature = loadFeature("tests/features/createStudent.feature");
 
 defineFeature(feature, (test) => {
+  afterEach(async () => {
+    await resetDatabase();
+  });
+
   test("Successfully create a student", ({ given, when, then }) => {
     let studentData: { name: string; email: string };
     let response: request.Response;
 
     given(
-      'I want to create a student named "John Doe" with email "john.doe@example.com"',
-      () => {
-        studentData = { name: "John Doe", email: "john.doe@example.com" };
+      /^I want to create a student named "(.*)" with email "(.*)"$/,
+      (name, email) => {
+        studentData = { name, email };
       }
     );
 

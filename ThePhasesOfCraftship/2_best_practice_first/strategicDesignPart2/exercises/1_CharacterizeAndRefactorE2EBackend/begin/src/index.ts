@@ -55,6 +55,16 @@ app.post("/students", async (req: Request, res: Response) => {
 
     const { name, email } = req.body;
 
+    const studentExists = await prisma.student.findUnique({ where: { email } });
+
+    if (studentExists) {
+      return res.status(409).json({
+        error: Errors.StudentAlreadyExists,
+        data: undefined,
+        success: false,
+      });
+    }
+
     const student = await prisma.student.create({
       data: {
         name,

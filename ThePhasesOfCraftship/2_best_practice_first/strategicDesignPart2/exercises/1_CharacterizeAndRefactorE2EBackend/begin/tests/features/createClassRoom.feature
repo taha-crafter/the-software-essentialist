@@ -13,3 +13,8 @@ Feature: Create Classroom
     Given I want to create a classroom without a name
     When I request to create a classroom
     Then the classroom creation should fail with a validation error
+
+  Scenario: Fail to create a classroom with an existing name
+    Given a classroom with the same name already exists
+    When I request to create another classroom with the same name
+    Then the classroom creation should fail with an error

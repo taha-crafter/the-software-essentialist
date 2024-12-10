@@ -6,11 +6,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const Errors = {
+export const Errors = {
   ValidationError: "ValidationError",
   StudentNotFound: "StudentNotFound",
   ClassNotFound: "ClassNotFound",
   ClassAlreadyExists: "ClassAlreadyExists",
+  StudentAlreadyExists: "StudentAlreadyExists",
   AssignmentNotFound: "AssignmentNotFound",
   ServerError: "ServerError",
   ClientError: "ClientError",

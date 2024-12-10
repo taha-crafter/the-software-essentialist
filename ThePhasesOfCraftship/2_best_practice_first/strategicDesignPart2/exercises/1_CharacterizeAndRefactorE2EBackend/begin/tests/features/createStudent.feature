@@ -14,3 +14,9 @@ Feature: Create Student
     When I request to create a student
     Then the student should not be created
     And I should receive a validation error
+
+  Scenario: Fail to create a student with an existing email
+    Given a student with an email already exists
+    When I request to create another student with the same email
+    Then the student should not be created
+    And I should receive an error "StudentAlreadyExists"

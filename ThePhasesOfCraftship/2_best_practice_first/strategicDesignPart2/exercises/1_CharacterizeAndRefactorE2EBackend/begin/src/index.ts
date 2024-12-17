@@ -212,6 +212,20 @@ app.post("/assignments", async (req: Request, res: Response) => {
 
     const { classId, title } = req.body;
 
+    const classRoom = await prisma.class.findUnique({
+      where: {
+        id: classId,
+      },
+    });
+
+    if (!classRoom) {
+      return res.status(404).json({
+        error: Errors.ClassNotFound,
+        data: undefined,
+        success: false,
+      });
+    }
+
     const assignment = await prisma.assignment.create({
       data: {
         classId,

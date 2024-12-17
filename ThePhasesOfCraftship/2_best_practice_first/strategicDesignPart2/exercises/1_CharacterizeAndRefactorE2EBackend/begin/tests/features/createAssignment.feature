@@ -8,3 +8,8 @@ Feature: Create Assignment
     Given a class exists
     When I create an assignment
     Then the assignment is created
+
+  Scenario: Fail to create an assignment with a missing class
+    Given a class does not exist
+    When I create an assignment
+    Then the assignment is not created

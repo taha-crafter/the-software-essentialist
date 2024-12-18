@@ -13,6 +13,7 @@ export const Errors = {
   ClassAlreadyExists: "ClassAlreadyExists",
   StudentAlreadyExists: "StudentAlreadyExists",
   AssignmentNotFound: "AssignmentNotFound",
+  AssignmentAlreadyExistsForClass: "AssignmentAlreadyExistsForClass",
   ServerError: "ServerError",
   ClientError: "ClientError",
   StudentAlreadyEnrolled: "StudentAlreadyEnrolled",
@@ -221,6 +222,21 @@ app.post("/assignments", async (req: Request, res: Response) => {
     if (!classRoom) {
       return res.status(404).json({
         error: Errors.ClassNotFound,
+        data: undefined,
+        success: false,
+      });
+    }
+
+    const assignmentExistsForClass = await prisma.assignment.findFirst({
+      where: {
+        classId,
+        title,
+      },
+    });
+
+    if (assignmentExistsForClass) {
+      return res.status(409).json({
+        error: Errors.AssignmentAlreadyExistsForClass,
         data: undefined,
         success: false,
       });

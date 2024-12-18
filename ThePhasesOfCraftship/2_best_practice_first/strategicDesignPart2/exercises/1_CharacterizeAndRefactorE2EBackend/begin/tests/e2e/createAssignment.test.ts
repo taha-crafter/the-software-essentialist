@@ -5,6 +5,7 @@ import { loadFeature, defineFeature } from "jest-cucumber";
 import { resetDatabase } from "../fixtures/reset";
 import { Class } from "@prisma/client";
 import { ClassRoomBuilder } from "../fixtures/classRoomBuilder";
+import { AssignmentBuilder } from "../fixtures/AssignmentBuilder";
 
 const feature = loadFeature("tests/features/createAssignment.feature");
 
@@ -65,6 +66,43 @@ defineFeature(feature, (test) => {
       expect(response.status).toBe(404);
       expect(response.body.success).toBe(false);
       expect(response.body.error).toBe(Errors.ClassNotFound);
+    });
+  });
+
+  test("Fail to create the same assignment twice", ({
+    given,
+    and,
+    when,
+    then,
+  }) => {
+    let requestBody: any = {};
+    let response: any = {};
+    let classRoomBuilder: ClassRoomBuilder;
+
+    given("a class exists", () => {
+      classRoomBuilder = new ClassRoomBuilder().withName("Physics");
+    });
+
+    and("an assignment exists for the class", async () => {
+      const { assignment, classRoom } = await new AssignmentBuilder()
+        .from(classRoomBuilder)
+        .withTitle("PhysicAssignment")
+        .build();
+
+      requestBody = {
+        classId: classRoom.id,
+        title: assignment.title,
+      };
+    });
+
+    when("I create an assignment with the same title", async () => {
+      response = await request(app).post("/assignments").send(requestBody);
+    });
+
+    then("the assignment should not be created", () => {
+      expect(response.status).toBe(409);
+      expect(response.body.success).toBe(false);
+      expect(response.body.error).toBe(Errors.AssignmentAlreadyExistsForClass);
     });
   });
 });

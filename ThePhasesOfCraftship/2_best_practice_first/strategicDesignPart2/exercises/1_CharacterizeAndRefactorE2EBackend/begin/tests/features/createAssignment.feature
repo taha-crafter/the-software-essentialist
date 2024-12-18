@@ -13,3 +13,9 @@ Feature: Create Assignment
     Given a class does not exist
     When I create an assignment
     Then the assignment is not created
+
+  Scenario: Fail to create the same assignment twice
+    Given a class exists
+    And an assignment exists for the class
+    When I create an assignment with the same title
+    Then the assignment should not be created

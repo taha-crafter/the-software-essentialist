@@ -7,7 +7,10 @@
 	"scripts": {
 		"clean": "npm run clean --workspaces --if-present",
 		"build": "npm run build --workspaces --if-present", 
-    "start:dev:back": "npm run start:dev --workspace=@dddforum/backend"
+    "start:dev:back": "npm run start:dev --workspace=@dddforum/backend",
+    "start:dev:front": "npm run dev --workspace=@dddforum/frontend",
+    "test:e2e:front": "npm run test:e2e --workspace=@dddforum/frontend",
+    "test:e2e:back": "npm run test:e2e --workspace=@dddforum/backend"
 	},
   "devDependencies": {
     "@types/jest": "^29.5.12",

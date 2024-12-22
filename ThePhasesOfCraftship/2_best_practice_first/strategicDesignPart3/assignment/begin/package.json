@@ -12,6 +12,7 @@
     "test:e2e:front": "npm run test:e2e --workspace=@dddforum/frontend",
     "test:e2e:back": "npm run test:e2e --workspace=@dddforum/backend"
 	},
+  
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/node": "^18.16.19",
@@ -28,5 +29,5 @@
     "ts-node": "^10.9.1",
     "tsc-alias": "^1.8.8",
     "typescript": "^5.3.2"
-  }
+}
 }

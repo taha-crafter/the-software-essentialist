@@ -35,6 +35,7 @@ build/
 
 # dotenv environment variables file
 .env
+.env*
 
 # IDE specific files
 .vscode/

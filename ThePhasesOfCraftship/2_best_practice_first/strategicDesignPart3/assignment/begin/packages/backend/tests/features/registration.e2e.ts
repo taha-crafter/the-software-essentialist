@@ -1,9 +1,19 @@
 import { defineFeature, loadFeature } from "jest-cucumber";
 import path from "path";
+import { CreateUserParams } from "../../../shared/src/api/users";
+import { CreateUserBuilder } from "../../../shared/tests/support/builders/createUserBuilder";
+import request from "supertest";
+import { app, server } from "../../src/index";
+
+beforeAll(async () => {});
+
+afterAll(async () => {
+  server.close();
+});
 
 const featurePath = path.resolve(
   __dirname,
-  "../../../shared/features/registration.feature",
+  "../../../shared/tests/features/registration.feature",
 );
 const feature = loadFeature(featurePath);
 
@@ -14,16 +24,48 @@ defineFeature(feature, (test) => {
     then,
     and,
   }) => {
-    given("I am a new user", () => {});
+    let createUserParams: CreateUserParams;
+    let createUserResponse: any = {};
+    let addEmailToListResponse: any = {};
+
+    given("I am a new user", () => {
+      createUserParams = new CreateUserBuilder().withAllRandomDetails().build();
+    });
 
     when(
       "I register with valid account details accepting marketing emails",
-      () => {},
+      async () => {
+        createUserResponse = await request(app)
+          .post("/users/new")
+          .send(createUserParams);
+
+        addEmailToListResponse = await request(app)
+          .post("/marketing/new")
+          .send({
+            email: createUserParams.email,
+          });
+      },
     );
 
-    then("I should be granted access to my account", () => {});
+    then("I should be granted access to my account", () => {
+      const { data, success, error } = createUserResponse.body;
+      expect(createUserResponse.status).toBe(201);
+      expect(data!.id).toBeDefined();
+      expect(data!.email).toEqual(createUserParams.email);
+      expect(data!.firstName).toEqual(createUserParams.firstName);
+      expect(data!.lastName).toEqual(createUserParams.lastName);
+      expect(data!.username).toEqual(createUserParams.username);
+    });
 
-    and("I should expect to receive marketing emails", () => {});
+    and("I should expect to receive marketing emails", () => {
+      const { success } = addEmailToListResponse.body;
+      expect(addEmailToListResponse.status).toBe(201);
+      expect(success).toBeTruthy();
+      expect(addEmailToListResponse.body.error).toBeUndefined();
+      expect(addEmailToListResponse.body.data.email).toBe(
+        createUserParams.email,
+      );
+    });
   });
 
   test("Successful registration without marketing emails accepted", ({

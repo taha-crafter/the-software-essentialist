@@ -52,9 +52,9 @@ export class DomainEvent {
 
   public static toDomain(eventModel: EventModel): DomainEvent {
     return new DomainEvent(
-      eventModel.name,
-      JSON.parse(eventModel.data),
       eventModel.aggregateId,
+      JSON.parse(eventModel.data),
+      eventModel.name,
       eventModel.id,
       eventModel.retries,
       eventModel.status as DomainEventStatus,

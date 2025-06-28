@@ -8,6 +8,16 @@ const prisma = database.getConnection();
 async function main() {
   console.log('Starting seed...');
 
+  // Check if database is already seeded
+  const existingSeedMember = await prisma.member.findUnique({
+    where: { id: 'seed-member-1' }
+  });
+
+  if (existingSeedMember) {
+    console.log('Already seeded the database :)');
+    return;
+  }
+
   // Create three members
   const [member1, member2, member3] = await Promise.all([
     prisma.member.create({

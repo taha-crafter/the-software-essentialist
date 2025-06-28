@@ -11,10 +11,18 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
+    "test:e2e": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
     "lint": {
       "outputs": []
     },
     "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "start:dev": {
       "cache": false,
       "persistent": true
     }

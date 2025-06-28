@@ -34,6 +34,8 @@ export class EventOutboxTable {
   async save(events: DomainEvent[], transaction?: Prisma.TransactionClient) {
     const prismaInstance = transaction || this.database.getConnection();
 
+    
+
     for (const event of events) {
       await prismaInstance.event.upsert({
         where: { id: event.id },

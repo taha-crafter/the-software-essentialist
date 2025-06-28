@@ -51,6 +51,7 @@ export class DomainEvent {
   }
 
   public static toDomain(eventModel: EventModel): DomainEvent {
+    // Here, it looks like we have the old arrangement of the domain event structure.
     return new DomainEvent(
       eventModel.name,
       JSON.parse(eventModel.data),

@@ -15,20 +15,25 @@ export class Relay {
     this.queue = []
   }
 
-  public start() {
-    setInterval(async () => {
-      const newEvents = await this.outboxTable.getUnprocessedEvents();
-      if (newEvents.length > 0) {
-        this.addToQueue(newEvents);
-      }
-      this.processQueue();
-    }, 2000);
+  public async start() {
+    try {
+      await this.publisher.initialize();
+      setInterval(async () => {
+        const newEvents = await this.outboxTable.getUnprocessedEvents();
+        if (newEvents.length > 0) {
+          this.addToQueue(newEvents);
+        }
+        this.processQueue();
+      }, 2000);
+    } catch (err) {
+      console.log('failed to start nats', err)
+    }
   }
 
   private addToQueue(events: DomainEvent[]): void {
     events.forEach(event => {
       const isDuplicate = this.queue.some(
-        queuedEvent => queuedEvent.aggregateId === event.aggregateId && queuedEvent.name === event.name
+        queuedEvent => queuedEvent.id
       );
       if (!isDuplicate) {
         this.queue.push(event);
@@ -55,7 +60,7 @@ export class Relay {
 
       try {
         // Attempt to write it to RabbitMQ 
-        await this.publishToRabbitMQ(event);
+        await this.publishToQueue(event);
 
         // Mark it as published and save the event
         event.markPublished();
@@ -70,7 +75,8 @@ export class Relay {
     this.isProcessing = false;
     }
 
-  private async publishToRabbitMQ(event: DomainEvent): Promise<void> {
+  private async publishToQueue(event: DomainEvent): Promise<void> {
+    console.log(event)
     console.log(`Publishing event to Message Broker: ${event.name} ${JSON.stringify(event.data)}`);
     await this.publisher.publishEvents([event]);
   }

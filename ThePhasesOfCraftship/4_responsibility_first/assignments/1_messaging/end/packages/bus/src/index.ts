@@ -1,6 +1,8 @@
 // Port exports
-export { type EventBus } from './ports/eventBus';
+export * from './ports/eventBus';
 
 // Adapter exports
+export * from './adapters/natsEventBus';
+export * from './adapters/pubSubEventBus';
 export { InMemoryEventBus } from './adapters/inMemoryEventBus';
-export { NatsEventBus } from './adapters/natsEventBus';
+export { createInbox } from 'nats';

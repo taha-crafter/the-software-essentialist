@@ -55,7 +55,7 @@ export class Relay {
 
       try {
         // Attempt to write it to RabbitMQ 
-        await this.publishToRabbitMQ(event);
+        await this.publishToQueue(event);
 
         // Mark it as published and save the event
         event.markPublished();
@@ -70,7 +70,7 @@ export class Relay {
     this.isProcessing = false;
     }
 
-  private async publishToRabbitMQ(event: DomainEvent): Promise<void> {
+  private async publishToQueue(event: DomainEvent): Promise<void> {
     console.log(`Publishing event to Message Broker: ${event.name} ${JSON.stringify(event.data)}`);
     await this.publisher.publishEvents([event]);
   }

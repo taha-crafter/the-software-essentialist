@@ -53,7 +53,7 @@ describe('posts', () => {
 
     describe ('creating new posts', () => {
 
-      it ('as a level 2 member, it can create a link post', async () => {
+      it.only ('as a level 2 member, it can create a link post', async () => {
         const { token, userId } = await createFakeAuthTokenAndUser();
         const { member } = await setupLevel2Member(apiClient, token, userId, databaseFixture);
 

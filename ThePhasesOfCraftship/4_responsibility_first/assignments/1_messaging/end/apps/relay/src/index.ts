@@ -12,3 +12,4 @@ const nats = new NatsEventBus();
 const relay = new Relay(outboxTable, nats);
 
 relay.start();
+console.log('Relay started ~')

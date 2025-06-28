@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@dddforum/core": "*",
-    "nats": "^2.29.2"
+    "nats": "2.29.2"
   },
   "keywords": [],
   "author": "",

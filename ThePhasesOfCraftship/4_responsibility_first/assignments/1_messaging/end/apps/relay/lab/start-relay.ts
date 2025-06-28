@@ -1,20 +1,22 @@
 
-import { PrismaClient } from "@prisma/client";
 import { randomUUID } from "crypto";
 import { Relay } from "../src/relay";
-import { NatsEventBus } from "@dddforum/bus";
+import { PubSubEventBus } from "@dddforum/bus";
 import { EventOutboxTable } from "@dddforum/outbox";
 import { DomainEvent, DomainEventStatus } from "@dddforum/core";
+import { PrismaDatabase } from "@dddforum/database";
+import { Config } from "@dddforum/config";
 
-class TestEvent extends DomainEvent {
+export class TestEvent extends DomainEvent {
     constructor (aggregateId: string, data: any, id?: string, retries?: number, status?: DomainEventStatus) {
-      super('TestEvent', data, aggregateId, id, retries, status);
+      super(aggregateId, data, 'TestEvent', id, retries, status);
     }
   }
 
-let prisma = new PrismaClient();
-let outbox = new EventOutboxTable(prisma);
-let natsEventBus = new NatsEventBus();
+let config = Config();
+let database = new PrismaDatabase(config);
+let outbox = new EventOutboxTable(database);
+let natsEventBus = new PubSubEventBus();
 let relay = new Relay(outbox, natsEventBus);
 
 async function setupLab () {
@@ -28,7 +30,7 @@ async function setupLab () {
   ]
 
   // clear the outbox entirely first
-  await prisma.event.deleteMany();
+  await database.getConnection().event.deleteMany();
   await outbox.save(unprocessedEvents);
   await outbox.save(publishedEvents);
 
@@ -37,7 +39,6 @@ async function setupLab () {
 
 async function main () {
   await setupLab();
-  await natsEventBus.initialize();
   relay.start();
 }
 

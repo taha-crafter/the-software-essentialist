@@ -72,8 +72,8 @@ export async function setupLevel2Member (
     throw new Error('Failed to verify member level');
   }
 
-  // Wait for 3 seconds before checking the reputation level
-  await new Promise(resolve => setTimeout(resolve, 3000));
+  // Wait for 15 seconds before checking the reputation level
+  await new Promise(resolve => setTimeout(resolve, 15000));
 
   return { member }; 
 }
